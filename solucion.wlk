@@ -1,17 +1,17 @@
-
 object refugio {
     var property familias = []
     var property animales = []
 
-// Recorro los animales del refugio (filter) -> para cada animal, compruebo si alguna familia puede adoptarlo (any) ->
-// niego el resultado (not) para quedarme únicamente con los animales que ninguna familia puede adoptar
+    // 3.
+    // Recorro los animales del refugio (filter) -> para cada animal, compruebo si alguna familia puede adoptarlo (any) ->
+    // niego el resultado (not) para quedarme únicamente con los animales que ninguna familia puede adoptar
 
     method noPuedenSerAdoptados() {
         animales.filter( { unAnimal => not familias.any( { unaFamilia => unaFamilia.puedeAdoptarlo(unAnimal) })})
     }
 
-// quizás el self.animales().contain(unAnimal) es demasiado? preguntar en clase
-
+    // 4.
+    // quizás el self.animales().contain(unAnimal) es demasiado? preguntar en clase
     method adoptarUnAnimal(unaFamilia, unAnimal){
         if(self.animales().contains(unAnimal) and unaFamilia.puedeAdoptarlo(unAnimal)){
             unaFamilia.mascotas().add(unAnimal)
@@ -77,23 +77,67 @@ class Pez inherits Animal {
 }
 
 class Perro inherits Animal {
+
     const property raza
     override method espacioQueOcupa() = raza.espacioQueOcupa()
+
+}
+
+// 5.a
+class PerroSalvaje inherits Perro {
+    override method esPeludo() = true
+    override method espacioQueOcupa() = raza.espacioQueOcupa() * 2
+    override method tieneProblemasCon(unAnimal) = unAnimal.espacioQueOcupa() == 0.5
 }
 
 class Raza {
+
     method espacioQueOcupa()
     method esPeludo()
+    method tieneProblemasCon(unAnimal)
+
 }
 
 class RazaChica inherits Raza {
-    override method espacioQueOcupa() = 0.5
 
-    method tieneProblemasCon(unAnimal) = self.espacioQueOcupa() < unAnimal.espacioQueOcupa()
+    const property esPeludo
+
+    override method espacioQueOcupa() = 0.5
+    override method tieneProblemasCon(unAnimal) = self.espacioQueOcupa() < unAnimal.espacioQueOcupa()
 
 }
 
 class RazaGrande inherits Raza {
+
     const espacio
+    const property esPeludo
+
     override method espacioQueOcupa() = espacio
+    override method tieneProblemasCon(unAnimal) = null
 }
+
+// 5.b
+class RazaCruza inherits Raza {
+
+    // En orden -> la primera es la más importante
+    const property razas = []
+
+    method cantidadDeRazas() = razas.size()
+
+    override method espacioQueOcupa() = razas.sum({ unaRaza => unaRaza.espacioQueOcupa() }) / self.cantidadDeRazas()
+    override method esPeludo() = razas.first().esPeludo()
+    override method tieneProblemasCon(unAnimal) = razas.all({ unaRaza => unaRaza.tieneProblemasCon(unAnimal) })
+
+}
+
+// 5.c
+// Razas simples
+const rottweiler = new RazaGrande(espacio = 0.8, esPeludo = false)
+const chihuahua  = new RazaChica(esPeludo = false)
+const siberiano  = new RazaGrande(espacio = 0.7, esPeludo = true)
+
+// Cruza: el orden importa (de mas a menos predominante)
+const cruza = new RazaCruza(razas = [rottweiler, chihuahua, siberiano])
+
+// Perro salvaje cuya raza es la cruza
+const perroSalvaje = new PerroSalvaje(nombre = "akamaru", raza = cruza)
