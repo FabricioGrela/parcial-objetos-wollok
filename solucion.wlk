@@ -1,22 +1,24 @@
 /*
 
-2. Queremos saber si una persona o mascota tiene problemas con un animal, para
-determinar si querrían adoptarlo.
-Los humanos tienen problemas con los animales que no les caen bien y, en caso de
-ser alérgicos, con los animales peludos (o sea, los gatos, y los perros de razas
-peludas).
-Por otro lado, para los perros de razas chicas, suelen tener problemas con animales
-que ocupan más espacio que ellos.
-Finalmente hay gatos mala onda que tienen problemas con cualquier animal (se
-indicará para cada caso si tienen esta particularidad), y los peces dorados no tienen
-problemas con nadie.
+3.  Considerando que el refugio tiene un conjunto de familias que se registraron para la 
+adopción de mascotas y un conjunto de animales para dar en adopción, implementar 
+lo necesario para poder conocer cuáles son los animales que no pueden ser 
+adoptados por ninguna familia
 
--> peludo, metodo esPeludo?
--> razaChica, metodo tieneProblemas?
--> gatos, metodo malaOnda? atributo?
--> metodo tieneProblemas en general y que reciba otraMascota?
+-> clavar un not.puedeSerAdoptado()?
 
 */
+
+object refugio {
+    var property familias = []
+    var property animales = []
+
+// Recorro los animales del refugio (filter) -> para cada animal, compruebo si alguna familia puede adoptarlo (any) ->
+// niego el resultado (not) para quedarme únicamente con los animales que ninguna familia puede adoptar
+    method noPuedenSerAdoptados() {
+        animales.filter( { unAnimal => not familias.any( { unaFamilia => unaFamilia.puedeAdoptarlo(unAnimal) })})
+    }
+}
 
 class Familia {
     var property personas = []
@@ -32,6 +34,8 @@ class Familia {
     }
 
     method tieneLugar(unAnimal) = unAnimal.espacioQueOcupa() <= self.espacioLibre()
+
+    method puedeAdoptarlo(unAnimal) = self.tieneLugar(unAnimal) and not personas.any( {unaPersona => unaPersona.animalesQueNoLeCaenBien().contains(unAnimal) } )
 }
 
 class Persona {
