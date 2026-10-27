@@ -7,7 +7,7 @@ object refugio {
     // niego el resultado (not) para quedarme únicamente con los animales que ninguna familia puede adoptar
 
     method noPuedenSerAdoptados() {
-        animales.filter( { unAnimal => not familias.any( { unaFamilia => unaFamilia.puedeAdoptarlo(unAnimal) })})
+        return animales.filter( { unAnimal => not familias.any( { unaFamilia => unaFamilia.puedeAdoptarlo(unAnimal) })})
     }
 
     // 4.
