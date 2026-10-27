@@ -1,22 +1,20 @@
 /*
 
-De cada familia conocemos las personas que la componen, las mascotas que tienen y el 
-tamaño (en unidades de espacio) de la casa en donde viven. De cada persona sabemos, 
-edad y si es alérgica. También sabemos la lista de animales que no les caen bien. 
-De momento contamos con tres tipos diferentes de animales: Perros, gatos y peces 
-dorados. Todos los animales tienen un nombre asignado. 
-Resolver los siguientes requerimientos aplicando los conceptos del paradigma orientado a 
-objetos. Anexar a la solución un diagrama estático para comunicar el diseño de la solución. 
-1.  Necesitamos saber si una familia tiene lugar para un animal. Esto ocurre cuando la 
-casa familiar tiene disponible el lugar que el animal ocupa. 
-a.  Cada persona de la familia utiliza 1 unidad de espacio de la casa si son 
-mayores de 13 años y 0.75 si no lo son. 
-b.  En cuanto a los animales, los gatos ocupan 0.5 unidades. 
-c.  Los peces dorados no ocupan espacio significativo. 
-d.  En el caso de los perros dependerá mayormente de su raza (hay razas 
-chicas como los chihuahuas y grandes como los rottweilers). Los perros de 
-raza chica utilizan 0.5 unidades, mientras que para los de razas grandes se 
-indicará para cada raza cuánto ocupan.
+2. Queremos saber si una persona o mascota tiene problemas con un animal, para
+determinar si querrían adoptarlo.
+Los humanos tienen problemas con los animales que no les caen bien y, en caso de
+ser alérgicos, con los animales peludos (o sea, los gatos, y los perros de razas
+peludas).
+Por otro lado, para los perros de razas chicas, suelen tener problemas con animales
+que ocupan más espacio que ellos.
+Finalmente hay gatos mala onda que tienen problemas con cualquier animal (se
+indicará para cada caso si tienen esta particularidad), y los peces dorados no tienen
+problemas con nadie.
+
+-> peludo, metodo esPeludo?
+-> razaChica, metodo tieneProblemas?
+-> gatos, metodo malaOnda? atributo?
+-> metodo tieneProblemas en general y que reciba otraMascota?
 
 */
 
@@ -38,26 +36,39 @@ class Familia {
 
 class Persona {
     var property edad
+
     const property esAlergica
+
     const property animalesQueNoLeCaenBien = []
+
     method espacioQueOcupa(){
         if (edad <= 13) {
             return 0.75
         } else return 1
     }
+
+    method tieneProblemasCon(unAnimal) = animalesQueNoLeCaenBien.contains(unAnimal) or ( self.esAlergica() and unAnimal.esPeludo() )
+
 }
 
 class Animal {
     const property nombre
     method espacioQueOcupa()
+    method esPeludo()
+    method tieneProblemasCon(unAnimal) = false // preguntar al profe
 }
 
 class Gato inherits Animal {
+    const property esMalaOnda
     override method espacioQueOcupa() = 0.5
+    override method esPeludo() = true
+    override method tieneProblemasCon(unAnimal) = esMalaOnda
 }
 
 class Pez inherits Animal {
     override method espacioQueOcupa() = 0
+    override method esPeludo() = false
+    override method tieneProblemasCon(unAnimal) = false
 }
 
 class Perro inherits Animal {
@@ -67,10 +78,14 @@ class Perro inherits Animal {
 
 class Raza {
     method espacioQueOcupa()
+    method esPeludo()
 }
 
 class RazaChica inherits Raza {
     override method espacioQueOcupa() = 0.5
+
+    method tieneProblemasCon(unAnimal) = self.espacioQueOcupa() < unAnimal.espacioQueOcupa()
+
 }
 
 class RazaGrande inherits Raza {
