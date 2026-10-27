@@ -1,13 +1,3 @@
-/*
-
-3.  Considerando que el refugio tiene un conjunto de familias que se registraron para la 
-adopción de mascotas y un conjunto de animales para dar en adopción, implementar 
-lo necesario para poder conocer cuáles son los animales que no pueden ser 
-adoptados por ninguna familia
-
--> clavar un not.puedeSerAdoptado()?
-
-*/
 
 object refugio {
     var property familias = []
@@ -15,8 +5,18 @@ object refugio {
 
 // Recorro los animales del refugio (filter) -> para cada animal, compruebo si alguna familia puede adoptarlo (any) ->
 // niego el resultado (not) para quedarme únicamente con los animales que ninguna familia puede adoptar
+
     method noPuedenSerAdoptados() {
         animales.filter( { unAnimal => not familias.any( { unaFamilia => unaFamilia.puedeAdoptarlo(unAnimal) })})
+    }
+
+// quizás el self.animales().contain(unAnimal) es demasiado? preguntar en clase
+
+    method adoptarUnAnimal(unaFamilia, unAnimal){
+        if(self.animales().contains(unAnimal) and unaFamilia.puedeAdoptarlo(unAnimal)){
+            unaFamilia.mascotas().add(unAnimal)
+            self.animales().remove(unAnimal)
+        }
     }
 }
 
@@ -36,6 +36,7 @@ class Familia {
     method tieneLugar(unAnimal) = unAnimal.espacioQueOcupa() <= self.espacioLibre()
 
     method puedeAdoptarlo(unAnimal) = self.tieneLugar(unAnimal) and not personas.any( {unaPersona => unaPersona.animalesQueNoLeCaenBien().contains(unAnimal) } )
+
 }
 
 class Persona {
