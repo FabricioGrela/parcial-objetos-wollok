@@ -113,7 +113,7 @@ class RazaGrande inherits Raza {
     const property esPeludo
 
     override method espacioQueOcupa() = espacio
-    override method tieneProblemasCon(unAnimal) = null
+    override method tieneProblemasCon(unAnimal) = false
 }
 
 // 5.b
